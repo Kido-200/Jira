@@ -5,7 +5,7 @@ function App() {
     <div>
       <div>
         <div>
-          <span>test</span>
+          <span>2</span>
         </div>
       </div>
     </div>
