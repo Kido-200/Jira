@@ -1,13 +1,10 @@
 import React from "react";
+import ProjectListScreen from "screens/project-list";
 
 function App() {
   return (
-    <div>
-      <div>
-        <div>
-          <span>2</span>
-        </div>
-      </div>
+    <div className="App">
+      <ProjectListScreen />
     </div>
   );
 }
