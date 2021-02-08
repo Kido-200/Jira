@@ -3,7 +3,11 @@ import React from "react";
 function App() {
   return (
     <div>
-      <span> 2</span>
+      <div>
+        <div>
+          <span>test</span>
+        </div>
+      </div>
     </div>
   );
 }
