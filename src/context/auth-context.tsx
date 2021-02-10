@@ -1,11 +1,25 @@
 import React, { ReactNode, useState } from "react";
 import * as auth from "auth-provider";
 import { User } from "screens/project-list/search-panel";
+import { http } from "utils/http";
+import { useMount } from "utils";
 
 interface AuthForm {
   username: string;
   password: string;
 }
+
+const bootstrapUser = async () => {
+  let user = null;
+  const token = auth.getToken();
+  //取出localstorage里的token
+  if (token) {
+    //发请求给后台看看这个token对不对
+    const data = await http("me", { token });
+    user = data.user;
+  }
+  return user;
+};
 
 //Authcontext保存user状态和对user的操作方法
 const AuthContext = React.createContext<
@@ -31,6 +45,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     {children}
    </AuthContext.Provider>
   */
+
+  useMount(() => {
+    bootstrapUser().then(setUser);
+  });
+
   return (
     <AuthContext.Provider
       children={children}

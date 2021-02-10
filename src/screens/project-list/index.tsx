@@ -4,6 +4,7 @@ import List from "./list";
 import { clearnObject, useDebounce, useMount } from "utils";
 
 import * as qs from "qs";
+import { useHttp } from "utils/http";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -15,29 +16,21 @@ const ProjectListScrren = () => {
     personId: "",
   });
   //比起传统的防抖保存函数,我们的effect因为是根据值改变而调用的,所以在hook里的防抖只需要保存dep值就好了
-  const paramDebounce = useDebounce(param, 500);
+  const debouncedParam = useDebounce(param, 500);
   //select内容,所有项目负责人名称
   const [users, setUsers] = useState([]);
-
   const [list, setList] = useState([]);
+  const client = useHttp();
 
   //返回input对应的项目  如果为空返回所有项目
   useEffect(() => {
-    fetch(
-      `${apiUrl}/projects?${qs.stringify(clearnObject(paramDebounce))}`
-    ).then(async (response) => {
-      if (response.ok) {
-        setList(await response.json());
-      }
-    });
-  }, [paramDebounce]);
+    client("projects", {
+      data: clearnObject(debouncedParam),
+    }).then(setList);
+  }, [debouncedParam]);
 
   useMount(() => {
-    fetch(`${apiUrl}/users`).then(async (response) => {
-      if (response.ok) {
-        setUsers(await response.json());
-      }
-    });
+    client("users").then(setUsers);
   });
 
   return (
