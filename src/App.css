@@ -1,0 +1,8 @@
+html {
+  /* 浏览器默认16px * 62.5% = 10px */
+  font-size: 62.5%;
+}
+
+html body #root .App {
+  min-height: 100vh;
+}
