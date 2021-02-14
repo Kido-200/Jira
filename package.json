@@ -15,7 +15,7 @@
     "@types/react-dom": "^17.0.0",
     "antd": "^4.12.2",
     "caniuse-lite": "^1.0.30001185",
-    "craco-less": "^1.17.1",
+    "craco-antd": "^1.19.0",
     "dayjs": "^1.10.4",
     "jira-dev-tool": "^1.6.55",
     "qs": "^6.9.6",
@@ -54,7 +54,6 @@
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
     "@types/qs": "^6.9.5",
-    "babel-plugin-import": "^1.13.3",
     "eslint-config-prettier": "^7.2.0",
     "husky": "^4.3.8",
     "json-server": "^0.16.3",
@@ -70,6 +69,4 @@
   "lint-staged": {
     "*.{js,css,md,ts,tsx}": "prettier --write"
   }
-
- 
 }

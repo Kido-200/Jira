@@ -5,8 +5,7 @@ import React from "react";
 import ProjectListScreen from "./screens/project-list";
 
 import { ReactComponent as SoftwareLogo } from "assets/software-logo.svg";
-import Button from "antd/lib/button";
-import Dropdown from "antd/lib/dropdown";
+import { Button, Dropdown } from "antd";
 import Menu from "antd/lib/menu";
 // import softwareLogo from 'assets/software-logo.svg'
 

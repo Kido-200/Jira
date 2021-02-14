@@ -1,18 +1,13 @@
-const CracoLessPlugin = require("craco-less");
+const CracoAntDesignPlugin = require("craco-antd");
 
 module.exports = {
   plugins: [
     {
-      plugin: CracoLessPlugin,
+      plugin: CracoAntDesignPlugin,
       options: {
-        lessLoaderOptions: {
-          lessOptions: {
-            modifyVars: {
-              "@primary-color": "rgb(0,82,204)",
-              "@font-size-base": "16px",
-            },
-            javascriptEnabled: true,
-          },
+        customizeTheme: {
+          "@primary-color": "rgb(0,82,204)",
+          "@font-size-base": "16px",
         },
       },
     },
