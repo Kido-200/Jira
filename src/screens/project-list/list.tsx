@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import { Table } from "antd";
+import Table from "antd/lib/table";
 import { spawn } from "child_process";
 import dayjs from "dayjs";
 import React from "react";

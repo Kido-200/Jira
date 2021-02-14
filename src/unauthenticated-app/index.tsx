@@ -1,4 +1,6 @@
-import { Button, Card, Divider } from "antd";
+import Button from "antd/lib/button";
+import Card from "antd/lib/card";
+import Divider from "antd/lib/divider";
 import React, { useState } from "react";
 import LoginScreen from "./login";
 import RegisterScreen from "./register";

@@ -1,6 +1,7 @@
 import { useAuth } from "context/auth-context";
 import React, { FormEvent } from "react";
-import { Form, Input } from "antd";
+import Form from "antd/lib/form";
+import Input from "antd/lib/input";
 import { LongButton } from "unauthenticated-app";
 
 const RegisterScreen = () => {
