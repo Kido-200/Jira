@@ -3,15 +3,18 @@ import { callbackify } from "util";
 
 //单独处理0  null undefined会被 !value排除
 export const isFalsy = (value: unknown) => (value === 0 ? false : !value);
+
+export const isVoid = (value: unknown) =>
+  value === undefined || value === null || value === "";
+
 //在一个函数里,改变传入的对象本身是不好的
-export const clearnObject = (object: object) => {
+//object在typescript里很广泛 function都是object 所以要写成这样才是键值对的object
+export const clearnObject = (object: { [key: string]: unknown }) => {
   const result = { ...object };
   Object.keys(object).forEach((key) => {
-    //@ts-ignore
     const value = object[key];
     //注意不能写成!value因为value为0也会被删掉,显然不能删,注意这是个坑
-    if (isFalsy(value)) {
-      //@ts-ignore
+    if (isVoid(value)) {
       delete result[key];
     }
   });

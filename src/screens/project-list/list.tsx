@@ -23,6 +23,8 @@ const List = ({ list, users }: ListProps) => {
   return (
     <Table
       pagination={false}
+      // 别忘了rowKey
+      rowKey="id"
       columns={[
         {
           title: "名称",
@@ -32,6 +34,7 @@ const List = ({ list, users }: ListProps) => {
         {
           title: "部门",
           dataIndex: "organization",
+          key: "organization",
         },
         {
           title: "负责人",
