@@ -1,11 +1,11 @@
 import { render } from "@testing-library/react";
-import Table from "antd/lib/table";
+import Table, { TableProps } from "antd/lib/table";
 import { spawn } from "child_process";
 import dayjs from "dayjs";
 import React from "react";
 import { User } from "./search-panel";
 
-interface Project {
+export interface Project {
   id: string;
   name: string;
   personId: string;
@@ -14,12 +14,15 @@ interface Project {
   created: number;
 }
 
-interface ListProps {
-  list: Project[];
+//TableProps传入一个泛型RecordType也就是dataSource的类型
+//TableProps自带了Table上所有的属性?
+interface ListProps extends TableProps<Project> {
   users: User[];
 }
 
-const List = ({ list, users }: ListProps) => {
+//用TableProps配合这里的props能完成属性透传
+//Table里直接 {...props}就可以了
+const List = ({ users, ...props }: ListProps) => {
   return (
     <Table
       pagination={false}
@@ -60,7 +63,7 @@ const List = ({ list, users }: ListProps) => {
           },
         },
       ]}
-      dataSource={list}
+      {...props}
     />
   );
 };

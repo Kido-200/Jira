@@ -16,7 +16,7 @@ export const http = async (
   const config = {
     method: "GET",
     headers: {
-      //标准的格式
+      //token标准的格式
       Authorization: token ? `Bearer ${token}` : "",
       "Content-Type": data ? "application/json" : "",
     },

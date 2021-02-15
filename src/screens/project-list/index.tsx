@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import SearchPanel from "./search-panel";
 import List from "./list";
-import { clearnObject, useDebounce, useMount } from "utils";
+import { useDebounce } from "utils";
 
-import * as qs from "qs";
-import { useHttp } from "utils/http";
 import styled from "@emotion/styled";
+import { Typography } from "antd";
 
-const apiUrl = process.env.REACT_APP_API_URL;
+import { useProjects } from "../../utils/project";
+import { useUsers } from "utils/user";
 
 const ProjectListScrren = () => {
   const [param, setParam] = useState({
@@ -16,29 +16,23 @@ const ProjectListScrren = () => {
     //select选择的负责人
     personId: "",
   });
+
   //比起传统的防抖保存函数,我们的effect因为是根据值改变而调用的,所以在hook里的防抖只需要保存dep值就好了
   const debouncedParam = useDebounce(param, 500);
   //select内容,所有项目负责人名称
-  const [users, setUsers] = useState([]);
-  const [list, setList] = useState([]);
-  const client = useHttp();
 
-  //返回input对应的项目  如果为空返回所有项目
-  useEffect(() => {
-    client("projects", {
-      data: clearnObject(debouncedParam),
-    }).then(setList);
-  }, [debouncedParam]);
-
-  useMount(() => {
-    client("users").then(setUsers);
-  });
+  const { isLoading, error, data: list } = useProjects(debouncedParam);
+  //解构赋值,把data赋值给users
+  const { data: users } = useUsers();
 
   return (
     <Container>
       <h1>项目列表</h1>
-      <SearchPanel param={param} setParam={setParam} users={users} />
-      <List list={list} users={users} />
+      <SearchPanel param={param} setParam={setParam} users={users || []} />
+      {error ? (
+        <Typography.Text type={"danger"}>{error.message}</Typography.Text>
+      ) : null}
+      <List loading={isLoading} dataSource={list || []} users={users || []} />
     </Container>
   );
 };
