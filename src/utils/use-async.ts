@@ -13,12 +13,21 @@ const defaultInitialState: State<null> = {
   error: null,
 };
 
+const defaultConfig = {
+  throwOnError: false,
+};
+
 //处理异步请求的 Error和Loading问题
-export const useAsync = <D>(initialState?: State<D>) => {
+export const useAsync = <D>(
+  initialState?: State<D>,
+  initialConfig?: typeof defaultConfig
+) => {
+  const config = { ...defaultConfig, initialConfig };
   const [state, setState] = useState<State<D>>({
     ...defaultInitialState,
     ...initialState,
   });
+
   const setData = (data: D) =>
     setState({
       data,
@@ -40,15 +49,20 @@ export const useAsync = <D>(initialState?: State<D>) => {
       throw new Error("请传入Promise类型数据");
     }
     setState({ ...state, stat: "loading" });
-    return promise
-      .then((data) => {
-        setData(data);
-        return data;
-      })
-      .catch((error) => {
-        setError(error);
-        return error;
-      });
+    return (
+      promise
+        .then((data) => {
+          setData(data);
+          return data;
+        })
+        //catch会消化异常,如果不主动抛出,外面会接受不到异常
+        .catch((error) => {
+          setError(error);
+          //默认不抛出,即外面不用写catch
+          if (config.throwOnError) return Promise.reject(error);
+          return error;
+        })
+    );
   };
 
   return {
