@@ -22,7 +22,7 @@ export const useAsync = <D>(
   initialState?: State<D>,
   initialConfig?: typeof defaultConfig
 ) => {
-  const config = { ...defaultConfig, initialConfig };
+  const config = { ...defaultConfig, ...initialConfig };
   const [state, setState] = useState<State<D>>({
     ...defaultInitialState,
     ...initialState,
@@ -69,7 +69,7 @@ export const useAsync = <D>(
     isIdle: state.stat === "idle",
     isLoading: state.stat === "loading",
     isError: state.stat === "error",
-    isSuccess: (state.stat = "success"),
+    isSuccess: state.stat === "success",
     run,
     setData,
     setError,
