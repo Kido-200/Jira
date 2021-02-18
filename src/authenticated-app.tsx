@@ -9,6 +9,7 @@ import { ProjectScreen } from "screens/project";
 import { ReactComponent as SoftwareLogo } from "assets/software-logo.svg";
 import { Button, Dropdown } from "antd";
 import Menu from "antd/lib/menu";
+import { resetRoute } from "utils";
 // import softwareLogo from 'assets/software-logo.svg'
 
 export const AuthenticatedApp = () => {
@@ -23,6 +24,7 @@ export const AuthenticatedApp = () => {
               path="/projects/:projectId/*"
               element={<ProjectScreen />}
             ></Route>
+            <Navigate to="/projects" />
           </Routes>
         </BrowserRouter>
       </main>
@@ -36,8 +38,10 @@ const PageHeader = () => {
   return (
     <Header between={true}>
       <HeaderLeft gap={true}>
-        {/* <img src={softwareLogo} /> 这样是img的形式我们希望svg形式渲染,就可以自定义样式 */}
-        <SoftwareLogo width={"18rem"} color={"rgb(38,132,255"} />
+        <Button type="link" onClick={resetRoute}>
+          {/* <img src={softwareLogo} /> 这样是img的形式我们希望svg形式渲染,就可以自定义样式 */}
+          <SoftwareLogo width={"18rem"} color={"rgb(38,132,255"} />
+        </Button>
         <h2>项目</h2>
         <h2>用户</h2>
       </HeaderLeft>
