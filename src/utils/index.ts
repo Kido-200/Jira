@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useState } from "react";
 
 //单独处理0  null undefined会被 !value排除
@@ -64,7 +65,12 @@ export const useDocumentTitle = (
   title: string,
   keepOnUnmount: boolean = true
 ) => {
-  const oldTitle = document.title;
+  //页面加载时: oldTitle = 旧title 'React App'
+  //加载后: oldTitle = 新title
+
+  // //闭包写法
+  // const oldTitle = document.title;
+  const oldTitle = React.useRef(document.title).current;
 
   useEffect(() => {
     document.title = title;
@@ -74,8 +80,20 @@ export const useDocumentTitle = (
     //页面被卸载的时候调用
     return () => {
       if (!keepOnUnmount) {
+        //如果不指定依赖,读到的就是旧title`
         document.title = oldTitle;
       }
     };
-  }, []);
+  }, [keepOnUnmount, oldTitle]);
+
+  // //闭包写法可读性不好,别人容易看不懂
+  // useEffect(() => {
+  //   //页面被卸载的时候调用
+  //   return () => {
+  //     if (!keepOnUnmount) {
+  //       //如果不指定依赖,读到的就是旧title
+  //       document.title = oldTitle;
+  //     }
+  //   };
+  // }, []);
 };
