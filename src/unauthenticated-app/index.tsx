@@ -9,21 +9,18 @@ import logo from "assets/logo.svg";
 import left from "assets/left.svg";
 import right from "assets/right.svg";
 import { Typography } from "antd";
+import { useDocumentTitle } from "utils";
 
 export const UnauthenticatedApp = () => {
   const [isRegister, setIsRegister] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+
+  useDocumentTitle("请登录注册以继续");
+
   return (
     <Container>
       <Header />
       <Background />
-      <Button
-        onClick={() => {
-          throw new Error("点击抛出一个异常");
-        }}
-      >
-        抛出异常
-      </Button>
       <ShadowCard>
         <Title>{isRegister ? "请注册" : "请登录"}</Title>
         {error ? (

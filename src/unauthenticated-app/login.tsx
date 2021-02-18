@@ -1,14 +1,13 @@
 import { useAuth } from "context/auth-context";
-import React, { FormEvent, useState } from "react";
+import React from "react";
 import Form from "antd/lib/form";
 import Input from "antd/lib/input";
 import { LongButton } from "unauthenticated-app";
 import { useAsync } from "utils/use-async";
-import { spawn } from "child_process";
 
 const LoginScreen = ({ onError }: { onError: (error: Error) => void }) => {
   const { login } = useAuth();
-  // isLoading在render里不会改变,还不知道怎么修复
+
   const { run, isLoading } = useAsync(undefined, { throwOnError: true });
 
   const handleSubmit = async (values: {

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { callbackify } from "util";
 
 //单独处理0  null undefined会被 !value排除
 export const isFalsy = (value: unknown) => (value === 0 ? false : !value);
@@ -22,9 +21,7 @@ export const clearnObject = (object: { [key: string]: unknown }) => {
 };
 
 export const useMount = (callback: () => void) => {
-  useEffect(() => {
-    callback();
-  }, []);
+  useEffect(callback, []);
 };
 
 //useDebounce作用是防抖保存value更新后的值
@@ -61,4 +58,24 @@ export const useArray = <T>(initialArray: T[]) => {
     removeIndex,
     add,
   };
+};
+
+export const useDocumentTitle = (
+  title: string,
+  keepOnUnmount: boolean = true
+) => {
+  const oldTitle = document.title;
+
+  useEffect(() => {
+    document.title = title;
+  }, [title]);
+
+  useEffect(() => {
+    //页面被卸载的时候调用
+    return () => {
+      if (!keepOnUnmount) {
+        document.title = oldTitle;
+      }
+    };
+  }, []);
 };
