@@ -41,6 +41,12 @@ const SearchPanel = ({ param, setParam, users }: SearchPanelProps) => {
         />
       </Form.Item>
       <Form.Item>
+        {/* 当Option value和Select value相同时被选中 
+          不管你setParam是什么类型,他通过searchParams.get得到的一定是string
+          因为user.id是number类型
+          所以后面点击 Select=string  Option=number
+          永远匹配不到了,匹配不到Option则显示Select value
+        */}
         <Select
           value={param.personId}
           onChange={(value) =>
@@ -52,7 +58,7 @@ const SearchPanel = ({ param, setParam, users }: SearchPanelProps) => {
         >
           <Select.Option value={""}>负责人</Select.Option>
           {users.map((user) => (
-            <Select.Option value={user.id} key={user.id}>
+            <Select.Option value={String(user.id)} key={user.id}>
               {user.name}
             </Select.Option>
           ))}

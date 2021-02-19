@@ -8,14 +8,11 @@ import { Typography } from "antd";
 
 import { useProjects } from "../../utils/project";
 import { useUsers } from "utils/user";
+import { useUrlQueryParam } from "utils/url";
 
 const ProjectListScrren = () => {
-  const [param, setParam] = useState({
-    //项目的名称  input管理
-    name: "",
-    //select选择的负责人
-    personId: "",
-  });
+  const [keys] = useState<("name" | "personId")[]>(["name", "personId"]);
+  const [param, setParam] = useUrlQueryParam(keys);
 
   //比起传统的防抖保存函数,我们的effect因为是根据值改变而调用的,所以在hook里的防抖只需要保存dep值就好了
   const debouncedParam = useDebounce(param, 500);
@@ -38,6 +35,8 @@ const ProjectListScrren = () => {
     </Container>
   );
 };
+
+// ProjectListScrren.whyDidYouRender = true
 
 const Container = styled.div`
   padding: 3.2rem;
