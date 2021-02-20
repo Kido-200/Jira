@@ -27,6 +27,15 @@ export const useAsync = <D>(
     ...defaultInitialState,
     ...initialState,
   });
+  const [retry, setRetry] = useState(() => {
+    return () => {};
+  });
+  /**不能写成let retry = () => {}
+   * 因为react一直都有人触发重新渲染
+   * 当别人触发重新渲染，整个组件重新更新
+   * 这个retry就又被初始化成了空函数,而run一般是useEffect的deps改变才会触发
+   * 这样就丢失了保存的oldPromise了
+   */
 
   const setData = (data: D) =>
     setState({
@@ -42,12 +51,18 @@ export const useAsync = <D>(
       data: null,
     });
 
-  //用来触发异步请求
+  //用来触发异步请求,更新state
   //传入一个Promise会把promise返回的data保存在data里
-  const run = (promise: Promise<D>) => {
+  const run = (
+    promise: Promise<D>,
+    runConfig?: { retry: () => Promise<D> }
+  ) => {
     if (!promise || !promise.then) {
       throw new Error("请传入Promise类型数据");
     }
+    setRetry(() => () => {
+      if (runConfig?.retry) run(runConfig?.retry(), runConfig);
+    });
     setState({ ...state, stat: "loading" });
     return (
       promise
@@ -72,6 +87,8 @@ export const useAsync = <D>(
     isSuccess: state.stat === "success",
     run,
     setData,
+    //retry被调用时重新跑一遍run,让state刷新一遍
+    retry,
     setError,
     ...state,
   };

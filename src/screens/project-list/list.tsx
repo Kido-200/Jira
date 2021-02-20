@@ -1,7 +1,9 @@
 import Table, { TableProps } from "antd/lib/table";
+import { Pin } from "components/pin";
 import dayjs from "dayjs";
 import React from "react";
 import { Link } from "react-router-dom";
+import { useEditProject } from "utils/project";
 import { User } from "./search-panel";
 
 export interface Project {
@@ -17,17 +19,37 @@ export interface Project {
 //TableProps自带了Table上所有的属性?
 interface ListProps extends TableProps<Project> {
   users: User[];
+  refresh?: () => void;
 }
 
 //用TableProps配合这里的props能完成属性透传
 //Table里直接 {...props}就可以了
 const List = ({ users, ...props }: ListProps) => {
+  //不能在这种事件触发和if语句等调用hook,所以我们只能用effect返回出一个方法来调用
+  const { mutate } = useEditProject();
+  const pinProject = (id: number) => (pin: boolean) =>
+    mutate({ id, pin }).then(props.refresh);
+
   return (
     <Table
       pagination={false}
       // 别忘了rowKey
       rowKey="id"
       columns={[
+        {
+          title: <Pin checked={true} disabled={true} />,
+          render(value, project) {
+            //星星亮不亮是后台pin属性决定,所以onChange要触发请求操作数据库
+            //不能在这种事件触发和if语句等调用hook,所以我们只能用effect返回出一个方法来调用
+            //id是形成dom的时候就知道的,pin是要等服务器返回的 可以用柯里化来区分 这是一种编程风格
+            return (
+              <Pin
+                checked={project.pin}
+                onCheckedChange={pinProject(project.id)}
+              />
+            );
+          },
+        },
         {
           title: "名称",
           sorter: (a, b) => a.name.localeCompare(b.name),
