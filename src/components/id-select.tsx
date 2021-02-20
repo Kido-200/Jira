@@ -9,6 +9,7 @@ interface IdSelectProps
   value: Raw | null | undefined;
   onChange: (value?: number) => void;
   defaultOptionName?: string;
+  //id就是Option.value的类型,这是服务端决定的
   options?: { name: string; id: number }[];
 }
 
@@ -24,10 +25,14 @@ export const IdSelect = (props: IdSelectProps) => {
   return (
     <Select
       {...restProps}
-      value={toNumber(value)}
+      //外面传进来的value是unknown,自己改成number与Option里的value一致(服务端决定的Option)
+      value={options?.length ? toNumber(value) : 0}
+      //这里传进来的value是下面Option的value类型,也就是unknown
+      //给外面传过去的value要对这个unknown进行改造,改造成number||undefined(0的情况)
       onChange={(value) => onChange(toNumber(value) || undefined)}
     >
       {defaultOptionName ? (
+        //Option里的value始终保持是number类型
         <Select.Option value={0}>{defaultOptionName}</Select.Option>
       ) : null}
       {options?.map((option) => (

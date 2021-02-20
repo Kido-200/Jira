@@ -1,15 +1,13 @@
-import { render } from "@testing-library/react";
 import Table, { TableProps } from "antd/lib/table";
-import { spawn } from "child_process";
 import dayjs from "dayjs";
 import React from "react";
 import { Link } from "react-router-dom";
 import { User } from "./search-panel";
 
 export interface Project {
-  id: string;
+  id: number;
   name: string;
-  personId: string;
+  personId: number;
   pin: boolean;
   organization: string;
   created: number;

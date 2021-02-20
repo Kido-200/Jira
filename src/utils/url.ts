@@ -19,6 +19,7 @@ export const useUrlQueryParam = <K extends string>(keys: K[]) => {
     ),
     (params: Partial<{ [key in K]: unknown }>) => {
       //Object.fromEntries把map或键值对列表返回成对象
+      //...Object.fromEntries(searchParams)这样就可以兼容setParams({某个属性的修改}),外面就不用每次传整个完整的Params了
       const o = clearnObject({
         ...Object.fromEntries(searchParams),
         ...params,

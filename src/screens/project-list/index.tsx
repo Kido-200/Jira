@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import SearchPanel from "./search-panel";
 import List from "./list";
 import { useDebounce, useDocumentTitle } from "utils";
@@ -8,21 +8,15 @@ import { Typography } from "antd";
 
 import { useProjects } from "../../utils/project";
 import { useUsers } from "utils/user";
-import { useUrlQueryParam } from "utils/url";
+import { useProjectsSearchParams } from "./util";
 
 const ProjectListScrren = () => {
-  const [keys] = useState<("name" | "personId")[]>(["name", "personId"]);
-  const [param, setParam] = useUrlQueryParam(keys);
+  useDocumentTitle("项目列表", false);
 
-  //比起传统的防抖保存函数,我们的effect因为是根据值改变而调用的,所以在hook里的防抖只需要保存dep值就好了
-  const debouncedParam = useDebounce(param, 500);
-  //select内容,所有项目负责人名称
-
-  const { isLoading, error, data: list } = useProjects(debouncedParam);
+  const [param, setParam] = useProjectsSearchParams();
+  const { isLoading, error, data: list } = useProjects(useDebounce(param, 500));
   //解构赋值,把data赋值给users
   const { data: users } = useUsers();
-
-  useDocumentTitle("项目列表", false);
 
   return (
     <Container>

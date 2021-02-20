@@ -2,11 +2,12 @@
 import { jsx } from "@emotion/react";
 import Form from "antd/lib/form";
 import Input from "antd/lib/input";
-import Select from "antd/lib/select";
+import { UserSelect } from "components/user-select";
 import React from "react";
+import { Project } from "./list";
 
 export interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
   title: string;
@@ -16,10 +17,7 @@ export interface User {
 
 interface SearchPanelProps {
   users: User[];
-  param: {
-    name: string;
-    personId: string;
-  };
+  param: Partial<Pick<Project, "name" | "personId">>;
   setParam: (param: SearchPanelProps["param"]) => void;
 }
 
@@ -47,22 +45,20 @@ const SearchPanel = ({ param, setParam, users }: SearchPanelProps) => {
           所以后面点击 Select=string  Option=number
           永远匹配不到了,匹配不到Option则显示Select value
         */}
-        <Select
+        <UserSelect
+          //UserSelect已经保证了这个value最终传给Select会是一个number
           value={param.personId}
+          //UserSelect已经保证了这个value一定是个number||undefined(选defalut的情况)
+          //为什么是undefined的呢,因为undefined的情况personId就会在urlParam被过滤
+          //因为setParam对传入的props进行了clearnObject
           onChange={(value) =>
             setParam({
               ...param,
               personId: value,
             })
           }
-        >
-          <Select.Option value={""}>负责人</Select.Option>
-          {users.map((user) => (
-            <Select.Option value={String(user.id)} key={user.id}>
-              {user.name}
-            </Select.Option>
-          ))}
-        </Select>
+          defaultOptionName="负责人"
+        />
       </Form.Item>
     </Form>
   );
