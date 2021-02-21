@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useMountedRef } from "utils";
 
 //D是data的类型
@@ -40,49 +40,57 @@ export const useAsync = <D>(
 
   const mountedRef = useMountedRef();
 
-  const setData = (data: D) =>
-    setState({
-      data,
-      stat: "success",
-      error: null,
-    });
+  const setData = useCallback(
+    (data: D) =>
+      setState({
+        data,
+        stat: "success",
+        error: null,
+      }),
+    [setState]
+  );
 
-  const setError = (error: Error) =>
-    setState({
-      error,
-      stat: "error",
-      data: null,
-    });
+  const setError = useCallback(
+    (error: Error) =>
+      setState({
+        error,
+        stat: "error",
+        data: null,
+      }),
+    [setState]
+  );
 
   //用来触发异步请求,更新state
   //传入一个Promise会把promise返回的data保存在data里
-  const run = (
-    promise: Promise<D>,
-    runConfig?: { retry: () => Promise<D> }
-  ) => {
-    if (!promise || !promise.then) {
-      throw new Error("请传入Promise类型数据");
-    }
-    setRetry(() => () => {
-      if (runConfig?.retry) run(runConfig?.retry(), runConfig);
-    });
-    setState({ ...state, stat: "loading" });
-    return (
-      promise
-        .then((data) => {
-          //组件还在,没被卸载,才去修改state  不然state都已经被卸载掉了去修改state会报错
-          if (mountedRef.current) setData(data);
-          return data;
-        })
-        //catch会消化异常,如果不主动抛出,外面会接受不到异常
-        .catch((error) => {
-          setError(error);
-          //默认不抛出,即外面不用写catch
-          if (config.throwOnError) return Promise.reject(error);
-          return error;
-        })
-    );
-  };
+  const run = useCallback(
+    (promise: Promise<D>, runConfig?: { retry: () => Promise<D> }) => {
+      if (!promise || !promise.then) {
+        throw new Error("请传入Promise类型数据");
+      }
+      setRetry(() => () => {
+        if (runConfig?.retry) run(runConfig?.retry(), runConfig);
+      });
+      // state会出现在deps里,而setState改变state导致无限循环,我们可以用函数setState解决
+      // setState({ ...state, stat: "loading" });
+      setState((prevState) => ({ ...prevState, stat: "loading" }));
+      return (
+        promise
+          .then((data) => {
+            //组件还在,没被卸载,才去修改state  不然state都已经被卸载掉了去修改state会报错
+            if (mountedRef.current) setData(data);
+            return data;
+          })
+          //catch会消化异常,如果不主动抛出,外面会接受不到异常
+          .catch((error) => {
+            setError(error);
+            //默认不抛出,即外面不用写catch
+            if (config.throwOnError) return Promise.reject(error);
+            return error;
+          })
+      );
+    },
+    [config.throwOnError, mountedRef, setData, setError]
+  );
 
   return {
     isIdle: state.stat === "idle",

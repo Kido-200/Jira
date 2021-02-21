@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { clearnObject } from "utils";
 import { useHttp } from "utils/http";
 import { useAsync } from "utils/use-async";
@@ -12,8 +12,10 @@ export const useProjects = (param?: Partial<Project>) => {
   const client = useHttp();
   const { run, ...result } = useAsync<Project[]>();
 
-  const fetchProjects = () =>
-    client("projects", { data: clearnObject(param || {}) });
+  const fetchProjects = useCallback(
+    () => client("projects", { data: clearnObject(param || {}) }),
+    [client, param]
+  );
 
   //返回input对应的项目  如果为空返回所有项目
   //fetchProjects()执行完传进去的promise你保存了也没用
@@ -23,7 +25,7 @@ export const useProjects = (param?: Partial<Project>) => {
     run(fetchProjects(), {
       retry: fetchProjects,
     });
-  }, [param]);
+  }, [param, fetchProjects]);
   return result;
 };
 
