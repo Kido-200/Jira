@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
-import { Row } from "components/lib";
+import { ButtonNoPadding, Row } from "components/lib";
 import { useAuth } from "context/auth-context";
-import React from "react";
+import React, { useState } from "react";
 import ProjectListScreen from "./screens/project-list";
 import { Navigate, Route, Routes } from "react-router";
 import { BrowserRouter } from "react-router-dom";
@@ -10,16 +10,24 @@ import { ReactComponent as SoftwareLogo } from "assets/software-logo.svg";
 import { Button, Dropdown } from "antd";
 import Menu from "antd/lib/menu";
 import { resetRoute } from "utils";
+import { ProjectModal } from "screens/project-list/project-modal";
+import { ProjectPopover } from "components/project-popover";
 // import softwareLogo from 'assets/software-logo.svg'
 
 export const AuthenticatedApp = () => {
+  const [projectModalOpen, setProjectModalOpen] = useState(false);
   return (
     <Container>
-      <PageHeader />
+      <PageHeader setProjectModalOpen={setProjectModalOpen} />
       <main>
         <BrowserRouter>
           <Routes>
-            <Route path="/projects" element={<ProjectListScreen />}></Route>
+            <Route
+              path="/projects"
+              element={
+                <ProjectListScreen setProjectModalOpen={setProjectModalOpen} />
+              }
+            ></Route>
             <Route
               path="/projects/:projectId/*"
               element={<ProjectScreen />}
@@ -28,42 +36,54 @@ export const AuthenticatedApp = () => {
           </Routes>
         </BrowserRouter>
       </main>
+      <ProjectModal
+        projectModalOpen={projectModalOpen}
+        onClose={() => setProjectModalOpen(false)}
+      />
     </Container>
   );
 };
 
-const PageHeader = () => {
-  const { logout, user } = useAuth();
-
+const PageHeader = (props: {
+  setProjectModalOpen: (isOpen: boolean) => void;
+}) => {
   return (
     <Header between={true}>
       <HeaderLeft gap={true}>
-        <Button type="link" onClick={resetRoute}>
+        <Button style={{ padding: 0 }} type="link" onClick={resetRoute}>
           {/* <img src={softwareLogo} /> 这样是img的形式我们希望svg形式渲染,就可以自定义样式 */}
           <SoftwareLogo width={"18rem"} color={"rgb(38,132,255"} />
         </Button>
-        <h2>项目</h2>
-        <h2>用户</h2>
+        <ProjectPopover setProjectModalOpen={props.setProjectModalOpen} />
+        <span>用户</span>
       </HeaderLeft>
       <HeaderRight>
-        <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item key="logout">
-                <Button type="link" onClick={logout}>
-                  登出
-                </Button>
-                {/* <a onClick={logout}>登出</a> */}
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          <Button type="link" onClick={(e) => e.preventDefault()}>
-            Hi, {user?.name}
-          </Button>
-        </Dropdown>
+        <User />
       </HeaderRight>
     </Header>
+  );
+};
+
+const User = () => {
+  const { logout, user } = useAuth();
+
+  return (
+    <Dropdown
+      overlay={
+        <Menu>
+          <Menu.Item key="logout">
+            <ButtonNoPadding type="link" onClick={logout}>
+              登出
+            </ButtonNoPadding>
+            {/* <a onClick={logout}>登出</a> */}
+          </Menu.Item>
+        </Menu>
+      }
+    >
+      <Button type="link" onClick={(e) => e.preventDefault()}>
+        Hi, {user?.name}
+      </Button>
+    </Dropdown>
   );
 };
 
