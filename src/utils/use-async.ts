@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useMountedRef } from "utils";
 
 //D是data的类型
 interface State<D> {
@@ -37,6 +38,8 @@ export const useAsync = <D>(
    * 这样就丢失了保存的oldPromise了
    */
 
+  const mountedRef = useMountedRef();
+
   const setData = (data: D) =>
     setState({
       data,
@@ -67,7 +70,8 @@ export const useAsync = <D>(
     return (
       promise
         .then((data) => {
-          setData(data);
+          //组件还在,没被卸载,才去修改state  不然state都已经被卸载掉了去修改state会报错
+          if (mountedRef.current) setData(data);
           return data;
         })
         //catch会消化异常,如果不主动抛出,外面会接受不到异常
