@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useReducer, useState } from "react";
 import { useMountedRef } from "utils";
 
 //D是data的类型
@@ -18,16 +18,27 @@ const defaultConfig = {
   throwOnError: false,
 };
 
+const useSafeDispatch = <T>(dispatch: (...args: T[]) => void) => {
+  const mountedRef = useMountedRef();
+  return useCallback(
+    (...args: T[]) => (mountedRef.current ? dispatch(...args) : void 0),
+    [mountedRef, dispatch]
+  );
+};
+
 //处理异步请求的 Error和Loading问题
 export const useAsync = <D>(
   initialState?: State<D>,
   initialConfig?: typeof defaultConfig
 ) => {
   const config = { ...defaultConfig, ...initialConfig };
-  const [state, setState] = useState<State<D>>({
-    ...defaultInitialState,
-    ...initialState,
-  });
+  const [state, dispatch] = useReducer(
+    (state: State<D>, action: Partial<State<D>>) => ({ ...state, ...action }),
+    {
+      ...defaultInitialState,
+      ...initialState,
+    }
+  );
   const [retry, setRetry] = useState(() => {
     return () => {};
   });
@@ -38,26 +49,26 @@ export const useAsync = <D>(
    * 这样就丢失了保存的oldPromise了
    */
 
-  const mountedRef = useMountedRef();
+  const safeDispatch = useSafeDispatch(dispatch);
 
   const setData = useCallback(
     (data: D) =>
-      setState({
+      safeDispatch({
         data,
         stat: "success",
         error: null,
       }),
-    [setState]
+    [safeDispatch]
   );
 
   const setError = useCallback(
     (error: Error) =>
-      setState({
+      safeDispatch({
         error,
         stat: "error",
         data: null,
       }),
-    [setState]
+    [safeDispatch]
   );
 
   //用来触发异步请求,更新state
@@ -70,14 +81,14 @@ export const useAsync = <D>(
       setRetry(() => () => {
         if (runConfig?.retry) run(runConfig?.retry(), runConfig);
       });
-      // state会出现在deps里,而setState改变state导致无限循环,我们可以用函数setState解决
-      // setState({ ...state, stat: "loading" });
-      setState((prevState) => ({ ...prevState, stat: "loading" }));
+      // state会出现在deps里,而dispatch改变state导致无限循环,我们可以用函数dispatch解决
+      // dispatch({ ...state, stat: "loading" });
+      safeDispatch({ stat: "loading" });
       return (
         promise
           .then((data) => {
             //组件还在,没被卸载,才去修改state  不然state都已经被卸载掉了去修改state会报错
-            if (mountedRef.current) setData(data);
+            setData(data);
             return data;
           })
           //catch会消化异常,如果不主动抛出,外面会接受不到异常
@@ -89,7 +100,7 @@ export const useAsync = <D>(
           })
       );
     },
-    [config.throwOnError, mountedRef, setData, setError]
+    [config.throwOnError, setData, setError, safeDispatch]
   );
 
   return {
