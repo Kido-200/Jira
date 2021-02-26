@@ -15,54 +15,27 @@ import { ProjectPopover } from "components/project-popover";
 // import softwareLogo from 'assets/software-logo.svg'
 
 export const AuthenticatedApp = () => {
-  const [projectModalOpen, setProjectModalOpen] = useState(false);
   return (
     <Container>
-      <PageHeader
-        projectButton={
-          <ButtonNoPadding
-            onClick={() => setProjectModalOpen(true)}
-            type={"link"}
-          >
-            创建项目
-          </ButtonNoPadding>
-        }
-      />
-      <main>
-        <BrowserRouter>
+      <BrowserRouter>
+        <PageHeader />
+        <main>
           <Routes>
-            <Route
-              path="/projects"
-              element={
-                <ProjectListScreen
-                  projectButton={
-                    <ButtonNoPadding
-                      onClick={() => setProjectModalOpen(true)}
-                      type={"link"}
-                    >
-                      创建项目
-                    </ButtonNoPadding>
-                  }
-                />
-              }
-            ></Route>
+            <Route path="/projects" element={<ProjectListScreen />}></Route>
             <Route
               path="/projects/:projectId/*"
               element={<ProjectScreen />}
             ></Route>
             <Navigate to="/projects" />
           </Routes>
-        </BrowserRouter>
-      </main>
-      <ProjectModal
-        projectModalOpen={projectModalOpen}
-        onClose={() => setProjectModalOpen(false)}
-      />
+        </main>
+        <ProjectModal />
+      </BrowserRouter>
     </Container>
   );
 };
 
-const PageHeader = (props: { projectButton: JSX.Element }) => {
+const PageHeader = () => {
   return (
     <Header between={true}>
       <HeaderLeft gap={true}>
@@ -70,7 +43,7 @@ const PageHeader = (props: { projectButton: JSX.Element }) => {
           {/* <img src={softwareLogo} /> 这样是img的形式我们希望svg形式渲染,就可以自定义样式 */}
           <SoftwareLogo width={"18rem"} color={"rgb(38,132,255"} />
         </Button>
-        <ProjectPopover {...props} />
+        <ProjectPopover />
         <span>用户</span>
       </HeaderLeft>
       <HeaderRight>

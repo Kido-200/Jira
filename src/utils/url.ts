@@ -2,7 +2,8 @@ import { useMemo } from "react";
 import { URLSearchParamsInit, useSearchParams } from "react-router-dom";
 import { clearnObject } from "utils";
 
-//返回url中指定键的参数值
+// 返回url中指定键的参数值 以及修改他的函数
+// [{} , ()=>{}]
 export const useUrlQueryParam = <K extends string>(keys: K[]) => {
   //返回一个URLSearchParams  这个对象不能直接获取属性,必须用get,has这种函数
   const [searchParams, setSearchParams] = useSearchParams();

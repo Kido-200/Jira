@@ -8,10 +8,10 @@ import { Button, Typography } from "antd";
 
 import { useProjects } from "../../utils/project";
 import { useUsers } from "utils/user";
-import { useProjectsSearchParams } from "./util";
-import { Row } from "components/lib";
+import { useProjectModal, useProjectsSearchParams } from "./util";
+import { ButtonNoPadding, Row } from "components/lib";
 
-const ProjectListScrren = (props: { projectButton: JSX.Element }) => {
+const ProjectListScrren = (props: {}) => {
   useDocumentTitle("项目列表", false);
 
   const [param, setParam] = useProjectsSearchParams();
@@ -24,19 +24,21 @@ const ProjectListScrren = (props: { projectButton: JSX.Element }) => {
   );
   //解构赋值,把data赋值给users
   const { data: users } = useUsers();
+  const { open } = useProjectModal();
 
   return (
     <Container>
       <Row between={true}>
         <h1>项目列表</h1>
-        {props.projectButton}
+        <ButtonNoPadding type={"link"} onClick={open}>
+          创建项目
+        </ButtonNoPadding>
       </Row>
       <SearchPanel param={param} setParam={setParam} users={users || []} />
       {error ? (
         <Typography.Text type={"danger"}>{error.message}</Typography.Text>
       ) : null}
       <List
-        projectButton={props.projectButton}
         refresh={retry}
         loading={isLoading}
         dataSource={list || []}
