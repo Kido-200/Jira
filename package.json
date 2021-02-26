@@ -19,7 +19,7 @@
     "craco-antd": "^1.19.0",
     "dayjs": "^1.10.4",
     "history": "^5.0.0",
-    "jira-dev-tool": "1.6.18",
+    "jira-dev-tool": "^1.6.59",
     "qs": "^6.9.6",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

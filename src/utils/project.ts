@@ -1,4 +1,5 @@
 import { useCallback, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { clearnObject } from "utils";
 import { useHttp } from "utils/http";
 import { useAsync } from "utils/use-async";
@@ -10,55 +11,65 @@ import { Project } from "../screens/project-list/list";
 //更加抽象了
 export const useProjects = (param?: Partial<Project>) => {
   const client = useHttp();
-  const { run, ...result } = useAsync<Project[]>();
 
-  const fetchProjects = useCallback(
-    () => client("projects", { data: clearnObject(param || {}) }),
-    [client, param]
+  //param改变则重新触发useQuery请求数据并重新渲染
+  //<returnDataType,errorType>
+  return useQuery<Project[]>(["projects", param], () =>
+    client("projects", { data: param })
   );
-
-  //返回input对应的项目  如果为空返回所有项目
-  //fetchProjects()执行完传进去的promise你保存了也没用
-  //因为resolve只会调用一次,只有resolve调用的时候Promise才会执行后续then
-  //所以只能传完整的fetch进去
-  useEffect(() => {
-    run(fetchProjects(), {
-      retry: fetchProjects,
-    });
-  }, [param, fetchProjects]);
-  return result;
 };
 
 export const useEditProject = () => {
-  const { run, ...asyncResult } = useAsync();
   const client = useHttp();
-  const mutate = (params: Partial<Project>) => {
-    return run(
+  const queryClient = useQueryClient();
+  // const mutate = (params: Partial<Project>) => {
+  //   return run(
+  //     client(`projects/${params.id}`, {
+  //       data: params,
+  //       method: "PATCH",
+  //     })
+  //   );
+  // };
+
+  //修改数据用useMutation,注意iuseMutation不会触发重新渲染
+  return useMutation(
+    (params: Partial<Project>) =>
       client(`projects/${params.id}`, {
         data: params,
         method: "PATCH",
-      })
-    );
-  };
-  return {
-    mutate,
-    ...asyncResult,
-  };
+      }),
+    {
+      //需要在修改数据完后手动触发渲染 这里queryClient让projects无效重新请求projects并渲染
+      onSuccess: () => queryClient.invalidateQueries("projects"),
+    }
+  );
 };
 
 export const useAddProject = () => {
-  const { run, ...asyncResult } = useAsync();
   const client = useHttp();
-  const mutate = (id: number, params: Partial<Project>) => {
-    return run(
-      client(`projects/${params.id}`, {
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    (params: Partial<Project>) =>
+      client(`projects`, {
         data: params,
         method: "POST",
-      })
-    );
-  };
-  return {
-    mutate,
-    ...asyncResult,
-  };
+      }),
+    {
+      onSuccess: () => queryClient.invalidateQueries("projects"),
+    }
+  );
+};
+
+//获取project详情
+export const useProject = (id?: number) => {
+  const client = useHttp();
+  return useQuery<Project>(
+    ["project", { id }],
+    () => client(`projects/${id}`),
+    {
+      //id有值的时候才触发上面函数  undefined这种不触发
+      enabled: !!id,
+    }
+  );
 };

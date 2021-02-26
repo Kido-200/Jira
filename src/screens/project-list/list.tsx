@@ -22,7 +22,6 @@ export interface Project {
 //TableProps自带了Table上所有的属性?
 interface ListProps extends TableProps<Project> {
   users: User[];
-  refresh?: () => void;
 }
 
 //用TableProps配合这里的props能完成属性透传
@@ -30,10 +29,9 @@ interface ListProps extends TableProps<Project> {
 const List = ({ users, ...props }: ListProps) => {
   //不能在这种事件触发和if语句等调用hook,所以我们只能用effect返回出一个方法来调用
   const { mutate } = useEditProject();
-  const { open } = useProjectModal();
-
-  const pinProject = (id: number) => (pin: boolean) =>
-    mutate({ id, pin }).then(props.refresh);
+  const { startEdit } = useProjectModal();
+  const pinProject = (id: number) => (pin: boolean) => mutate({ id, pin });
+  const editProject = (id: number) => () => startEdit(id);
 
   return (
     <Table
@@ -96,11 +94,10 @@ const List = ({ users, ...props }: ListProps) => {
               <Dropdown
                 overlay={
                   <Menu>
-                    <Menu.Item key={"edit"}>
-                      <ButtonNoPadding type={"link"} onClick={open}>
-                        创建项目
-                      </ButtonNoPadding>
+                    <Menu.Item onClick={editProject(project.id)} key={"edit"}>
+                      编辑
                     </Menu.Item>
+                    <Menu.Item key={"delete"}>删除</Menu.Item>
                   </Menu>
                 }
               >

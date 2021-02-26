@@ -6,8 +6,8 @@ type SelectProps = React.ComponentProps<typeof Select>;
 
 interface IdSelectProps
   extends Omit<SelectProps, "value" | "onChange" | "options"> {
-  value: Raw | null | undefined;
-  onChange: (value?: number) => void;
+  value?: Raw | null | undefined;
+  onChange?: (value?: number) => void;
   defaultOptionName?: string;
   //id就是Option.value的类型,这是服务端决定的
   options?: { name: string; id: number }[];
@@ -15,7 +15,8 @@ interface IdSelectProps
 
 /**
  * value可以传入多种类型的值
- * onChange只会回调number|undefined 类型
+ * 我们自己定义的onChange也就是用户可以使用的回调,只会给他传入number|undefined 类型
+ * Select自带onChange则会传入多种类型,这就需要我们手动过滤一下了
  * 当isNaN(Number(value))为true,选择默认类型
  * 选择默认类型,onChange回调undefined
  * @param props
@@ -29,7 +30,7 @@ export const IdSelect = (props: IdSelectProps) => {
       value={options?.length ? toNumber(value) : 0}
       //这里传进来的value是下面Option的value类型,也就是unknown
       //给外面传过去的value要对这个unknown进行改造,改造成number||undefined(0的情况)
-      onChange={(value) => onChange(toNumber(value) || undefined)}
+      onChange={(value) => onChange?.(toNumber(value) || undefined)}
     >
       {defaultOptionName ? (
         //Option里的value始终保持是number类型
