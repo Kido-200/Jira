@@ -29,10 +29,10 @@ const SearchPanel = ({ param, setParam, users }: SearchPanelProps) => {
         <Input
           placeholder={"项目名"}
           type="text"
+          // 受控组件写法
           value={param.name}
           onChange={(evt) =>
             setParam({
-              ...param,
               name: evt.target.value,
             })
           }

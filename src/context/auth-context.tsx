@@ -11,10 +11,11 @@ interface AuthForm {
   password: string;
 }
 
+//mount之后做身份验证,如果通过,把服务器返回回来的user返回出去
 const bootstrapUser = async () => {
   let user = null;
-  const token = auth.getToken();
   //取出localstorage里的token
+  const token = auth.getToken();
   if (token) {
     //发请求给后台看看这个token对不对
     const data = await http("me", { token });
@@ -57,6 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   */
 
   useMount(() => {
+    //判断localstorage里的token是否有效，有效就让data绑定上user
     run(bootstrapUser());
   });
 

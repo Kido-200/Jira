@@ -16,7 +16,7 @@ const LoginScreen = ({ onError }: { onError: (error: Error) => void }) => {
   }) => {
     try {
       //用try catch的话 因为login是异步的所以必须await
-
+      //密码直接明文发了安全性有问题 可以和后端协调一下用SHA256加密一下
       await run(login(values));
     } catch (e) {
       onError(e);

@@ -1,9 +1,12 @@
-import { useCallback, useEffect } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { clearnObject } from "utils";
+import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
+import { useProjectsSearchParams } from "screens/project-list/util";
 import { useHttp } from "utils/http";
-import { useAsync } from "utils/use-async";
 import { Project } from "../screens/project-list/list";
+import {
+  useAddConfig,
+  useDeleteConfig,
+  useEditConfig,
+} from "./use-optimistic-options";
 
 //就实现了直接调用这个就能异步获取到projects列表
 //并且具有error和loading判断
@@ -14,40 +17,32 @@ export const useProjects = (param?: Partial<Project>) => {
 
   //param改变则重新触发useQuery请求数据并重新渲染
   //<returnDataType,errorType>
+  //useQuery返回{data,isLoading,error}
   return useQuery<Project[]>(["projects", param], () =>
     client("projects", { data: param })
   );
 };
 
-export const useEditProject = () => {
+//project数据部分更新
+export const useEditProject = (queryKey: QueryKey) => {
   const client = useHttp();
-  const queryClient = useQueryClient();
-  // const mutate = (params: Partial<Project>) => {
-  //   return run(
-  //     client(`projects/${params.id}`, {
-  //       data: params,
-  //       method: "PATCH",
-  //     })
-  //   );
-  // };
 
-  //修改数据用useMutation,注意iuseMutation不会触发重新渲染
+  //修改数据用useMutation,注意useMutation不会触发重新渲染
+  //useMutation返回一个对象{mutate,mutateAsync, error, isLoading: mutateLoading}
+  //调用mutate就是下面这个函数
   return useMutation(
     (params: Partial<Project>) =>
       client(`projects/${params.id}`, {
         data: params,
         method: "PATCH",
       }),
-    {
-      //需要在修改数据完后手动触发渲染 这里queryClient让projects无效重新请求projects并渲染
-      onSuccess: () => queryClient.invalidateQueries("projects"),
-    }
+    useEditConfig(queryKey)
   );
 };
 
-export const useAddProject = () => {
+//添加project
+export const useAddProject = (queryKey: QueryKey) => {
   const client = useHttp();
-  const queryClient = useQueryClient();
 
   return useMutation(
     (params: Partial<Project>) =>
@@ -55,9 +50,19 @@ export const useAddProject = () => {
         data: params,
         method: "POST",
       }),
-    {
-      onSuccess: () => queryClient.invalidateQueries("projects"),
-    }
+    useAddConfig(queryKey)
+  );
+};
+
+export const useDeleteProject = (queryKey: QueryKey) => {
+  const client = useHttp();
+
+  return useMutation(
+    ({ id }: { id: number }) =>
+      client(`projects/${id}`, {
+        method: "DELETE",
+      }),
+    useDeleteConfig(queryKey)
   );
 };
 

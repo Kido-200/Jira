@@ -28,7 +28,6 @@ export const useUrlQueryParam = <K extends string>(keys: K[]) => {
         ...Object.fromEntries(searchParams),
         ...params,
       }) as URLSearchParamsInit;
-      console.log(o);
 
       return setSearchParams(o);
     },

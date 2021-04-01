@@ -49,6 +49,7 @@ const Title = styled.h2`
 
 const Background = styled.div`
   position: absolute;
+  top: 0;
   width: 100%;
   height: 100%;
   background-repeat: no-repeat;

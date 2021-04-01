@@ -7,6 +7,7 @@ export const AppProviders = ({ children }: { children: ReactNode }) => {
    */
   // return <AuthProvider children={children}  />
   return (
+    //react-query要client这个context来做缓存的
     <QueryClientProvider client={new QueryClient()}>
       <AuthProvider>{children}</AuthProvider>
     </QueryClientProvider>

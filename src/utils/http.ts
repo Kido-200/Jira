@@ -47,11 +47,14 @@ export const http = async (
     });
 };
 
+//使用了hook,useAuth 意味着这也是一个hook,他不能 useHttp(url)这样去调用,这违反了hook的链表结构
+//所以我们必须return一个function  而return function 当然用useCallback包装啦
 export const useHttp = () => {
   const { user } = useAuth();
   return useCallback(
     (...[endpoint, config]: Parameters<typeof http>) =>
       http(endpoint, { ...config, token: user?.token }),
+
     [user?.token]
   );
 };

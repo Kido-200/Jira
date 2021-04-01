@@ -18,7 +18,10 @@ const defaultConfig = {
   throwOnError: false,
 };
 
+//防止组件unmount了却调用了dispatch
+//比如list正在请求,立刻退出账户  此时list返回回来了,但是组件已经unmount了,fiber都没了fiber.hook当然也不存在了
 const useSafeDispatch = <T>(dispatch: (...args: T[]) => void) => {
+  //mountRef可以知道组件是否mount
   const mountedRef = useMountedRef();
   return useCallback(
     (...args: T[]) => (mountedRef.current ? dispatch(...args) : void 0),

@@ -10,10 +10,11 @@ export const ProjectScreen = () => {
       <Link to="kanban">看板</Link>
       <Link to="epic">epic</Link>
       <Routes>
-        <Route path="/kanban" element={<KanbanScreen />} />
-        <Route path="/epic" element={<EpicScreen />} />
+        <Route path="kanban" element={<KanbanScreen />} />
+        <Route path="epic" element={<EpicScreen />} />
         {/* 实现刚打开就显示看板 projects/id跟上面都不匹配 */}
-        <Navigate to={window.location.pathname + "/kanban"} />
+        {/* <Navigate to={window.location.pathname + "/kanban"} /> */}
+        <Navigate to={"kanban"} />
       </Routes>
     </div>
   );

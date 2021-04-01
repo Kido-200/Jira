@@ -5,19 +5,25 @@ import { ErrorBox } from "components/lib";
 import { UserSelect } from "components/user-select";
 import React, { useEffect } from "react";
 import { useAddProject, useEditProject } from "utils/project";
-import { useProjectModal } from "./util";
+import { useProjectModal, useProjectsQueryKey } from "./util";
 
 export const ProjectModal = () => {
+  //用这个hook管理modal开关行为与状态
   const {
     projectModalOpen,
     close,
     editingProject,
     isLoading,
   } = useProjectModal();
-  const useMutateProject = editingProject ? useEditProject : useAddProject;
+  //antd提供的form的ref
+  const [form] = useForm();
 
-  const { mutateAsync, error, isLoading: mutateLoading } = useMutateProject();
-  const [form] = useForm(); //antd提供的form的ref
+  //根据editingProject判断是增加project还是修改  ,运行返回对应的useMutation的返回值
+  const useMutateProject = editingProject ? useEditProject : useAddProject;
+  //获得react-query包装后对应的请求方式
+  const { mutateAsync, error, isLoading: mutateLoading } = useMutateProject(
+    useProjectsQueryKey()
+  );
   const onFinish = (values: any) => {
     mutateAsync({ ...editingProject, ...values }).then(() => {
       form.resetFields();
@@ -27,6 +33,8 @@ export const ProjectModal = () => {
 
   const title = editingProject ? "编辑项目" : "创建项目";
 
+  //别忘了useEffect在react commit阶段后异步调用
+  //为了编辑的时候能提前填好
   useEffect(() => {
     form.setFieldsValue(editingProject);
   }, [editingProject, form]);

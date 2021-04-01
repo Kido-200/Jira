@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { ButtonNoPadding, Row } from "components/lib";
 import { useAuth } from "context/auth-context";
-import React, { useState } from "react";
 import ProjectListScreen from "./screens/project-list";
 import { Navigate, Route, Routes } from "react-router";
 import { BrowserRouter } from "react-router-dom";
@@ -29,6 +28,7 @@ export const AuthenticatedApp = () => {
             <Navigate to="/projects" />
           </Routes>
         </main>
+
         <ProjectModal />
       </BrowserRouter>
     </Container>

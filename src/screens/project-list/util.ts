@@ -18,6 +18,11 @@ export const useProjectsSearchParams = () => {
   ] as const;
 };
 
+export const useProjectsQueryKey = () => {
+  const [params] = useProjectsSearchParams();
+  return ["projects", params];
+};
+
 export const useProjectModal = () => {
   const [{ projectCreate }, setProjectCreate] = useUrlQueryParam([
     "projectCreate",
@@ -26,11 +31,12 @@ export const useProjectModal = () => {
   const [{ editingProjectId }, setEditingProjectId] = useUrlQueryParam([
     "editingProjectId",
   ]);
+  const [_, setUrlParams] = useSearchParams();
+
   //异步请求获得editingProjectId对应数据内容
   const { data: editingProject, isLoading } = useProject(
     Number(editingProjectId)
   );
-  const [_, setUrlParams] = useSearchParams();
 
   const open = () => {
     setProjectCreate({ projectCreate: true });
@@ -44,7 +50,7 @@ export const useProjectModal = () => {
     setUrlParams({});
   };
 
-  //改变url中正在编辑的详情Id
+  //改变url中editingProjectId
   const startEdit = (id: number) =>
     setEditingProjectId({ editingProjectId: id });
 

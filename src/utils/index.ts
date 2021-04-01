@@ -70,6 +70,8 @@ export const useDocumentTitle = (
 
   // //闭包写法
   // const oldTitle = document.title;
+  //上面写法每次页面更新 oldTitle都会更新
+  //下面ref写法,document.title是个string,将会把这个string转换成ref对象,他的.current永远是原来的document.title
   const oldTitle = React.useRef(document.title).current;
 
   useEffect(() => {
