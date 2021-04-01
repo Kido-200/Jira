@@ -8,7 +8,8 @@ import { clearnObject } from "utils";
 //因为他也是用context实现的BrowserRouter相当于Provider
 export const useUrlQueryParam = <K extends string>(keys: K[]) => {
   //返回一个URLSearchParams  这个对象不能直接获取属性,必须用get,has这种函数
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const setSearchParam = useSetUrlSearchParam();
 
   return [
     //只有searchParams改变的时候改变param
@@ -21,15 +22,21 @@ export const useUrlQueryParam = <K extends string>(keys: K[]) => {
       [searchParams, keys]
     ),
     (params: Partial<{ [key in K]: unknown }>) => {
-      //Object.fromEntries把map或键值对列表返回成对象
-      //...Object.fromEntries(searchParams)这样就可以兼容setParams({某个属性的修改}),外面就不用每次传整个完整的Params了
-
-      const o = clearnObject({
-        ...Object.fromEntries(searchParams),
-        ...params,
-      }) as URLSearchParamsInit;
-
-      return setSearchParams(o);
+      return setSearchParam(params);
     },
   ] as const;
+};
+
+export const useSetUrlSearchParam = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  return (params: { [key in string]: unknown }) => {
+    //Object.fromEntries把map或键值对列表返回成对象
+    //...Object.fromEntries(searchParams)这样就可以兼容setParams({某个属性的修改}),外面就不用每次传整个完整的Params了
+    const o = clearnObject({
+      ...Object.fromEntries(searchParams),
+      ...params,
+    }) as URLSearchParamsInit;
+    return setSearchParams(o);
+  };
 };

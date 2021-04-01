@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useProject } from "utils/project";
-import { useUrlQueryParam } from "utils/url";
+import { useSetUrlSearchParam, useUrlQueryParam } from "utils/url";
 
 //项目列表搜索的参数
 export const useProjectsSearchParams = () => {
@@ -31,7 +31,7 @@ export const useProjectModal = () => {
   const [{ editingProjectId }, setEditingProjectId] = useUrlQueryParam([
     "editingProjectId",
   ]);
-  const [_, setUrlParams] = useSearchParams();
+  const setUrlParams = useSetUrlSearchParam();
 
   //异步请求获得editingProjectId对应数据内容
   const { data: editingProject, isLoading } = useProject(
@@ -47,7 +47,7 @@ export const useProjectModal = () => {
     // setProjectCreate({ projectCreate: undefined })
     // setEditingProjectId({editingProjectId:undefined})
     //这样就好了 一起修改
-    setUrlParams({});
+    setUrlParams({ projectCreate: "", editingProjectId: "" });
   };
 
   //改变url中editingProjectId
