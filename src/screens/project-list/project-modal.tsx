@@ -31,6 +31,11 @@ export const ProjectModal = () => {
     });
   };
 
+  const closeModal = () => {
+    form.resetFields();
+    close();
+  };
+
   const title = editingProject ? "编辑项目" : "创建项目";
 
   //别忘了useEffect在react commit阶段后异步调用
@@ -43,7 +48,7 @@ export const ProjectModal = () => {
     //不管是否隐藏都渲染执行一次
     <Drawer
       forceRender={true}
-      onClose={close}
+      onClose={closeModal}
       visible={projectModalOpen}
       width={"100%"}
     >

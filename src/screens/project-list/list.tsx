@@ -6,17 +6,9 @@ import dayjs from "dayjs";
 import React from "react";
 import { Link } from "react-router-dom";
 import { useDeleteProject, useEditProject } from "utils/project";
-import { User } from "./search-panel";
+import { Project } from "../../types/project";
+import { User } from "../../types/user";
 import { useProjectModal, useProjectsQueryKey } from "./util";
-
-export interface Project {
-  id: number;
-  name: string;
-  personId: number;
-  pin: boolean;
-  organization: string;
-  created: number;
-}
 
 //TableProps传入一个泛型RecordType也就是dataSource的类型
 //TableProps自带了Table上所有的属性?

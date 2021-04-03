@@ -21,12 +21,14 @@ export const useUrlQueryParam = <K extends string>(keys: K[]) => {
       //searchParams keys是hook的,会进行复用,所以可以传
       [searchParams, keys]
     ),
+    //ts约束用了useUrlQueryParam的只能改SearchParams当时传入的keys的key
     (params: Partial<{ [key in K]: unknown }>) => {
       return setSearchParam(params);
     },
   ] as const;
 };
 
+//而这个能改SearchParams所有key
 export const useSetUrlSearchParam = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 

@@ -14,8 +14,10 @@ export const ProjectScreen = () => {
         <Route path="epic" element={<EpicScreen />} />
         {/* 实现刚打开就显示看板 projects/id跟上面都不匹配 */}
         {/* <Navigate to={window.location.pathname + "/kanban"} /> */}
-        <Navigate to={"kanban"} />
+        <Navigate to={"kanban"} replace={true} />
       </Routes>
     </div>
   );
 };
+//['projects','projects/6','projects/6/kanban'] 往后退会去6,又变回6/kanban导致失效
+//replace就会变成['projects','projects/6/kanban']
