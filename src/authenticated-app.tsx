@@ -18,7 +18,7 @@ export const AuthenticatedApp = () => {
     <Container>
       <BrowserRouter>
         <PageHeader />
-        <main>
+        <Main>
           <Routes>
             <Route path="/projects" element={<ProjectListScreen />}></Route>
             <Route
@@ -27,7 +27,7 @@ export const AuthenticatedApp = () => {
             ></Route>
             <Navigate to="/projects" />
           </Routes>
-        </main>
+        </Main>
 
         <ProjectModal />
       </BrowserRouter>
@@ -84,6 +84,10 @@ const Header = styled(Row)`
   padding: 3.2rem;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
   z-index: 1;
+`;
+const Main = styled.main`
+  display: flex;
+  overflow: hidden;
 `;
 
 const HeaderLeft = styled(Row)``;
