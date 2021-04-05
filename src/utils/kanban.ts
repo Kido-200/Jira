@@ -1,7 +1,11 @@
 import { QueryKey, useMutation, useQuery } from "react-query";
 import { Kanban } from "types/kanban";
 import { useHttp } from "./http";
-import { useAddConfig, useDeleteConfig } from "./use-optimistic-options";
+import {
+  useAddConfig,
+  useDeleteConfig,
+  useReorderKanbanConfig,
+} from "./use-optimistic-options";
 
 //获取看板数据 每次获取数据都要传Partial<数据类型> 因为是根据这玩意儿在数据库找的对应数据呀
 export const useKanbans = (param?: Partial<Kanban>) => {
@@ -38,4 +42,25 @@ export const useDeletKanban = (queryKey: QueryKey) => {
       }),
     useDeleteConfig(queryKey)
   );
+};
+
+export interface SortProps {
+  //要重新排序的Item
+  fromId: number;
+  //目标Item
+  referenceId: number;
+  //目标Item的前还是后
+  type: "before" | "after";
+  fromKanbanId?: number;
+  toKanbanId?: number;
+}
+
+export const useReorderKanban = (queryKey: QueryKey) => {
+  const client = useHttp();
+  return useMutation((params: SortProps) => {
+    return client("kanbans/reorder", {
+      data: params,
+      method: "POST",
+    });
+  }, useReorderKanbanConfig(queryKey));
 };

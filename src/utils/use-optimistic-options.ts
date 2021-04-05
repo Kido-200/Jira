@@ -1,4 +1,6 @@
 import { QueryKey, useQueryClient } from "react-query";
+import { Task } from "types/task";
+import { reorder } from "./reorder";
 
 //用来生成useMutation后面的那个对象做乐观更新
 export const useConfig = (
@@ -43,3 +45,19 @@ export const useEditConfig = (queryKey: QueryKey) =>
   );
 export const useAddConfig = (queryKey: QueryKey) =>
   useConfig(queryKey, (target, old) => (old ? [...old, target] : []));
+
+export const useReorderKanbanConfig = (queryKey: QueryKey) =>
+  useConfig(queryKey, (target, old) => reorder({ list: old, ...target }));
+
+export const useReorderTaskConfig = (queryKey: QueryKey) =>
+  useConfig(queryKey, (target, old) => {
+    //乐观更新task序列中位置
+    const orderdList = reorder({ list: old, ...target }) as Task[];
+    //由于task可能设计跨kanban,所以不要忘记改变kanbanid
+    //注意old是当前所有看板的所有task的数组,所以可以直接这么改 返回的也是这么个玩意儿
+    return orderdList.map((item) =>
+      item.id === target.fromId
+        ? { ...item, kanbanId: target.toKanbanId }
+        : item
+    );
+  });
