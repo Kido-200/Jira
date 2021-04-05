@@ -43,6 +43,8 @@ const ProjectListScrren = () => {
 
 const Container = styled.div`
   padding: 3.2rem;
+  /* 父亲开了flex  子元素变成由内容撑开宽度,所以要设置flex:1膨胀到最大 */
+  flex: 1;
 `;
 
 export default ProjectListScrren;

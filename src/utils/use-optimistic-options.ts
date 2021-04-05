@@ -1,5 +1,6 @@
 import { QueryKey, useQueryClient } from "react-query";
 
+//用来生成useMutation后面的那个对象做乐观更新
 export const useConfig = (
   queryKey: QueryKey,
   callback: (target: any, old?: any[]) => any[]
