@@ -11,6 +11,8 @@ import Menu from "antd/lib/menu";
 import { resetRoute } from "utils";
 import { ProjectModal } from "screens/project-list/project-modal";
 import { ProjectPopover } from "components/project-popover";
+import React from "react";
+import { UserPopover } from "components/user-popover";
 // import softwareLogo from 'assets/software-logo.svg'
 
 export const AuthenticatedApp = () => {
@@ -44,7 +46,7 @@ const PageHeader = () => {
           <SoftwareLogo width={"18rem"} color={"rgb(38,132,255"} />
         </Button>
         <ProjectPopover />
-        <span>用户</span>
+        <UserPopover />
       </HeaderLeft>
       <HeaderRight>
         <User />
