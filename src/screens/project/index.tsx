@@ -40,6 +40,8 @@ export const ProjectScreen = () => {
 //replace就会变成['projects','projects/6/kanban']
 const Aside = styled.aside`
   background-color: rgb(244, 245, 247);
+  /* 让儿子的辅轴也就是高度等于这个父亲Aside的高度,也就是让下面的Menu能高度占满了 */
+  /* 这个Aside是grid设置的,所以他是占满高度的 */
   display: flex;
 `;
 
@@ -53,4 +55,5 @@ const Container = styled.div`
   display: grid;
   //左边16rem 右边看着办
   grid-template-columns: 16rem 1fr;
+  width: 100%;
 `;

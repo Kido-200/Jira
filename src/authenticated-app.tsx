@@ -86,6 +86,8 @@ const Header = styled(Row)`
   z-index: 1;
 `;
 const Main = styled.main`
+  //这是为了儿子的高度(辅轴)能跟这个Main一样,也就是撑满
+  //这个Main是满的,是因为父亲Container用grid划分的
   display: flex;
   overflow: hidden;
 `;
