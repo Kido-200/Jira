@@ -96,9 +96,9 @@ export const useDragEnd = () => {
         const fromKanbanId = +source.droppableId;
         const toKanbanId = +destination.droppableId;
         //跨看板排序
-        if (fromKanbanId === toKanbanId) {
-          return;
-        }
+        // if (fromKanbanId === toKanbanId) {
+        //   return;
+        // }
         const fromTask = allTasks?.filter(
           (task) => task.kanbanId === fromKanbanId
         )[source.index];
