@@ -102,11 +102,15 @@ export const useDragEnd = () => {
         const fromTask = allTasks?.filter(
           (task) => task.kanbanId === fromKanbanId
         )[source.index];
-        // 后台应该处理了,toTask=undefined则push到kanban最后
-        //空的时候index=0   放到最后index=length 都会让toTask = undefined
+        //当放到一个空的kanban,toTask为undefined,index=0
+        //放到最后index=length 都会让toTask = undefined
+        //后端需要处理一下toTask为undefined,则放到末尾
         const toTask = allTasks?.filter((task) => task.kanbanId === toKanbanId)[
           destination.index
         ];
+        console.log("source", source);
+        console.log("destination", destination);
+        console.log(toTask?.id);
 
         if (fromTask?.id === toTask?.id) {
           return;

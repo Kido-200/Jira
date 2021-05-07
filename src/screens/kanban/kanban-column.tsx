@@ -60,7 +60,7 @@ export const KanbanColumn = React.forwardRef<
           droppableId={String(kanban.id)}
         >
           {/* 如果没有minHeight 当没有task的时候内容区=0px 放不进去了 */}
-          <DropChild style={{ minHeight: "5px" }}>
+          <DropChild style={{ minHeight: "5px" }} need={true}>
             {tasks?.map((task, index) => (
               <Drag key={task.id} index={index} draggableId={"task" + task.id}>
                 {/* 这里应该去TaskCard转发Ref和kanban里做的一样,懒得写了 */}
